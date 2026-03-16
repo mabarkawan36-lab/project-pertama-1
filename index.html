@@ -1,297 +1,400 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IKY DEV - Ultimate Modern</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NUSACYBERA — Countdown</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-<style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family: 'Poppins', sans-serif;
-scroll-behavior:smooth;
-}
+    :root {
+      --accent: #00e5ff;
+      --bg: #080c14;
+      --card: rgba(255,255,255,0.06);
+      --border: rgba(255,255,255,0.12);
+    }
 
-body{
-background:#0f0f1a;
-color:white;
-overflow-x:hidden;
-}
+    body {
+      min-height: 100vh;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      font-family: 'Space Mono', monospace;
+      color: #fff;
+      overflow: hidden;
+      position: relative;
+    }
 
-/* ===== LOADING SCREEN ===== */
-.loader{
-position:fixed;
-width:100%;
-height:100%;
-background:#0f0f1a;
-display:flex;
-justify-content:center;
-align-items:center;
-z-index:9999;
-font-size:24px;
-letter-spacing:3px;
-animation: fadeOut 1s ease forwards;
-animation-delay:2s;
-}
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
 
-@keyframes fadeOut{
-to{
-opacity:0;
-visibility:hidden;
-}
-}
+    #glow {
+      position: fixed;
+      width: 700px; height: 700px;
+      border-radius: 50%;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 0;
+      transition: background 1.2s ease;
+    }
 
-/* ===== PARTICLE CANVAS ===== */
-canvas{
-position:fixed;
-top:0;
-left:0;
-z-index:-1;
-}
+    .wrap {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      padding-bottom: 80px;
+    }
 
-/* ===== NAVBAR ===== */
-nav{
-position:fixed;
-width:100%;
-padding:20px 50px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-background:rgba(255,255,255,0.05);
-backdrop-filter:blur(15px);
-z-index:1000;
-}
+    #badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 100px;
+      padding: 8px 20px;
+      margin-bottom: 22px;
+      transition: border-color 1.2s, box-shadow 1.2s;
+    }
 
-nav a{
-color:white;
-text-decoration:none;
-margin-left:20px;
-transition:0.3s;
-}
+    #dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      animation: pulse 1.5s ease-in-out infinite;
+      transition: background 1.2s, box-shadow 1.2s;
+    }
 
-nav a:hover{
-color:#00f2fe;
-}
+    #badge-text {
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      font-weight: 700;
+      transition: color 1.2s;
+    }
 
-/* ===== HERO ===== */
-.hero{
-height:100vh;
-display:flex;
-flex-direction:column;
-justify-content:center;
-align-items:center;
-text-align:center;
-padding:20px;
-}
+    h1 {
+      font-family: 'Orbitron', monospace;
+      font-weight: 900;
+      font-size: clamp(1.1rem, 4vw, 1.9rem);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, #fff 30%, var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 40px;
+      text-align: center;
+      transition: background 1.2s;
+    }
 
-.hero h1{
-font-size:60px;
-background:linear-gradient(90deg,#00f2fe,#4facfe,#a6ffcb);
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
-animation: fadeUp 1s ease forwards;
-}
+    #status-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 8px;
+      padding: 10px 24px;
+      margin-bottom: 40px;
+      transition: background 1.2s, border-color 1.2s;
+    }
 
-.hero p{
-margin-top:20px;
-opacity:0.8;
-animation: fadeUp 1.5s ease forwards;
-}
+    #status-text {
+      font-size: 0.68rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 700;
+      transition: color 1.2s;
+    }
 
-.btn{
-margin-top:30px;
-padding:15px 40px;
-border-radius:50px;
-border:none;
-cursor:pointer;
-background:linear-gradient(90deg,#00f2fe,#4facfe);
-color:black;
-font-weight:bold;
-transition:0.3s;
-position:relative;
-}
+    .countdown-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
 
-.btn:hover{
-transform:scale(1.1);
-}
+    .digit-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
 
-/* ===== SECTION ===== */
-section{
-padding:120px 40px;
-text-align:center;
-}
+    .digit-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px 28px;
+      min-width: 90px;
+      text-align: center;
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(2rem, 6vw, 3.4rem);
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.08);
+      transition: color 1.2s;
+    }
 
-.cards{
-display:flex;
-flex-wrap:wrap;
-justify-content:center;
-gap:30px;
-}
+    .digit-label {
+      font-size: 0.62rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      opacity: 0.45;
+    }
 
-.card{
-width:300px;
-padding:40px;
-border-radius:25px;
-background:rgba(255,255,255,0.05);
-backdrop-filter:blur(20px);
-transition:0.5s;
-opacity:0;
-transform:translateY(50px);
-}
+    .sep {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(1.5rem, 4vw, 2.5rem);
+      font-weight: 800;
+      margin-bottom: 28px;
+      transition: opacity 0.2s, color 1.2s;
+      user-select: none;
+    }
 
-.card.show{
-opacity:1;
-transform:translateY(0);
-}
+    .info-row {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 52px;
+    }
 
-.card:hover{
-transform:translateY(-10px) scale(1.05);
-}
+    .info-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 14px 28px;
+      text-align: center;
+      backdrop-filter: blur(8px);
+    }
 
-/* ===== CURSOR GLOW ===== */
-.cursor{
-position:fixed;
-width:20px;
-height:20px;
-border-radius:50%;
-background:#00f2fe;
-pointer-events:none;
-mix-blend-mode:difference;
-transition:transform 0.1s ease;
-z-index:999;
-}
+    .info-icon { font-size: 1.2rem; margin-bottom: 4px; }
 
-@keyframes fadeUp{
-from{opacity:0;transform:translateY(40px);}
-to{opacity:1;transform:translateY(0);}
-}
+    .info-label {
+      font-size: 0.58rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      opacity: 0.45;
+      margin-bottom: 4px;
+    }
 
-@media(max-width:768px){
-.hero h1{font-size:35px;}
-}
-</style>
+    .info-value {
+      font-family: 'Orbitron', monospace;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    footer {
+      position: fixed;
+      bottom: 0;
+      left: 0; right: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 12px 16px 16px;
+      background: linear-gradient(to top, rgba(8,12,20,0.95) 60%, transparent);
+      z-index: 1;
+      text-align: center;
+    }
+
+    .footer-copy {
+      font-size: 0.55rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      opacity: 0.18;
+    }
+
+    .footer-credit {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      opacity: 0.75;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .footer-credit .divider {
+      width: 30px;
+      height: 1px;
+      opacity: 0.5;
+      display: inline-block;
+      transition: background 1.2s;
+    }
+
+    .footer-credit .by {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.55rem;
+      opacity: 0.5;
+      letter-spacing: 0.15em;
+      font-weight: 400;
+    }
+
+    .footer-credit .names { transition: color 1.2s; }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.4; transform: scale(0.75); }
+    }
+
+    @media (max-width: 480px) {
+      .digit-card { min-width: 72px; padding: 14px 18px; }
+      .info-row { gap: 10px; }
+      .info-card { padding: 12px 18px; }
+    }
+  </style>
 </head>
-
 <body>
 
-<div class="loader">IKY DEV LOADING...</div>
-<canvas id="particles"></canvas>
-<div class="cursor"></div>
+<div id="glow"></div>
 
-<nav>
-<div><strong>IKY DEV</strong></div>
-<div>
-<a href="#">Home</a>
-<a href="#about">About</a>
-<a href="#project">Project</a>
-</div>
-</nav>
+<div class="wrap">
 
-<div class="hero">
-<h1>Next Level Experience</h1>
-<p>Ultimate Modern Website — All In One File</p>
-<button class="btn">Explore</button>
+  <div id="badge">
+    <div id="dot"></div>
+    <span id="badge-text">NUSACYBERA</span>
+  </div>
+
+  <h1 id="title">Memuat Status...</h1>
+
+  <div id="status-pill">
+    <span id="status-text">—</span>
+  </div>
+
+  <div class="countdown-row">
+    <div class="digit-block">
+      <div class="digit-card" id="d-h">00</div>
+      <div class="digit-label">Jam</div>
+    </div>
+    <div class="sep" id="sep1">:</div>
+    <div class="digit-block">
+      <div class="digit-card" id="d-m">00</div>
+      <div class="digit-label">Menit</div>
+    </div>
+    <div class="sep" id="sep2">:</div>
+    <div class="digit-block">
+      <div class="digit-card" id="d-s">00</div>
+      <div class="digit-label">Detik</div>
+    </div>
+  </div>
+
+  <div class="info-row">
+    <div class="info-card">
+      <div class="info-icon">🟢</div>
+      <div class="info-label">Buka</div>
+      <div class="info-value">06:00 WIB</div>
+    </div>
+    <div class="info-card">
+      <div class="info-icon">🔴</div>
+      <div class="info-label">Tutup</div>
+      <div class="info-value">00:00 WIB</div>
+    </div>
+  </div>
+
 </div>
 
-<section id="about">
-<h2>About This Site</h2>
-<div class="cards">
-<div class="card">Particle Background</div>
-<div class="card">Cursor Glow</div>
-<div class="card">Cinematic UI</div>
-</div>
-</section>
-
-<section id="project">
-<h2>Projects</h2>
-<div class="cards">
-<div class="card">Project Alpha</div>
-<div class="card">Project Beta</div>
-<div class="card">Project Gamma</div>
-</div>
-</section>
+<footer>
+  <div class="footer-credit">
+    <span class="divider" id="divider-l"></span>
+    <span class="by">by</span>
+    <span class="names" id="footer-names">ADMIN &amp; MODERATOR</span>
+    <span class="divider" id="divider-r"></span>
+  </div>
+  <div class="footer-copy">NUSACYBERA &copy; <span id="yr"></span></div>
+</footer>
 
 <script>
-/* ===== SCROLL REVEAL ===== */
-const cards=document.querySelectorAll(".card");
-window.addEventListener("scroll",()=>{
-const trigger=window.innerHeight*0.85;
-cards.forEach(card=>{
-const top=card.getBoundingClientRect().top;
-if(top<trigger){
-card.classList.add("show");
-}
-});
-});
+  document.getElementById('yr').textContent = new Date().getFullYear();
 
-/* ===== BUTTON SCROLL ===== */
-document.querySelector(".btn").onclick=()=>{
-document.querySelector("#about").scrollIntoView({behavior:"smooth"});
-};
+  const COLOR_OPEN   = '#00e5ff';
+  const COLOR_CLOSED = '#ff4444';
 
-/* ===== CURSOR GLOW ===== */
-const cursor=document.querySelector(".cursor");
-document.addEventListener("mousemove",(e)=>{
-cursor.style.left=e.clientX+"px";
-cursor.style.top=e.clientY+"px";
-});
+  function pad(n) { return String(n).padStart(2, '0'); }
 
-/* ===== PARTICLE SYSTEM ===== */
-const canvas=document.getElementById("particles");
-const ctx=canvas.getContext("2d");
+  function getState() {
+    const now   = new Date();
+    const total = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+    const open  = 6 * 3600;
+    const close = 24 * 3600;
+    if (total >= 0 && total < open) {
+      return { open: false, remaining: open - total };
+    } else {
+      return { open: true, remaining: close - total };
+    }
+  }
 
-canvas.width=window.innerWidth;
-canvas.height=window.innerHeight;
+  function applyColor(color) {
+    document.getElementById('dot').style.background        = color;
+    document.getElementById('dot').style.boxShadow         = `0 0 10px ${color}`;
+    document.getElementById('badge-text').style.color      = color;
+    document.getElementById('badge').style.border          = `1px solid ${color}44`;
+    document.getElementById('badge').style.boxShadow       = `0 0 20px ${color}22`;
+    document.getElementById('status-text').style.color     = color;
+    document.getElementById('status-pill').style.background= `${color}18`;
+    document.getElementById('status-pill').style.border    = `1px solid ${color}55`;
+    document.getElementById('sep1').style.color            = color;
+    document.getElementById('sep2').style.color            = color;
+    document.getElementById('d-h').style.color             = color;
+    document.getElementById('d-m').style.color             = color;
+    document.getElementById('d-s').style.color             = color;
+    document.getElementById('glow').style.background       = `radial-gradient(circle, ${color}18 0%, transparent 70%)`;
+    document.querySelector('h1').style.backgroundImage     = `linear-gradient(135deg, #fff 30%, ${color})`;
+    document.getElementById('footer-names').style.color    = color;
+    document.getElementById('divider-l').style.background  = color;
+    document.getElementById('divider-r').style.background  = color;
+  }
 
-let particlesArray=[];
+  let sepVisible = true;
+  setInterval(() => {
+    sepVisible = !sepVisible;
+    const op = sepVisible ? '0.85' : '0.1';
+    document.getElementById('sep1').style.opacity = op;
+    document.getElementById('sep2').style.opacity = op;
+  }, 500);
 
-class Particle{
-constructor(){
-this.x=Math.random()*canvas.width;
-this.y=Math.random()*canvas.height;
-this.size=Math.random()*2+1;
-this.speedX=Math.random()*1-0.5;
-this.speedY=Math.random()*1-0.5;
-}
-update(){
-this.x+=this.speedX;
-this.y+=this.speedY;
+  function tick() {
+    const { open, remaining } = getState();
+    const h = Math.floor(remaining / 3600);
+    const m = Math.floor((remaining % 3600) / 60);
+    const s = remaining % 60;
 
-if(this.x>canvas.width || this.x<0) this.speedX*=-1;
-if(this.y>canvas.height || this.y<0) this.speedY*=-1;
-}
-draw(){
-ctx.fillStyle="rgba(255,255,255,0.7)";
-ctx.beginPath();
-ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
-ctx.fill();
-}
-}
+    document.getElementById('d-h').textContent = pad(h);
+    document.getElementById('d-m').textContent = pad(m);
+    document.getElementById('d-s').textContent = pad(s);
 
-function init(){
-for(let i=0;i<100;i++){
-particlesArray.push(new Particle());
-}
-}
-init();
+    if (open) {
+      document.getElementById('title').textContent       = 'Grup Sedang Aktif';
+      document.getElementById('status-text').textContent = '⏰ Tutup jam 00:00 WIB — Sisa waktu';
+      applyColor(COLOR_OPEN);
+    } else {
+      document.getElementById('title').textContent       = 'Grup Sedang Tutup';
+      document.getElementById('status-text').textContent = '🔒 Buka jam 06:00 WIB — Sisa waktu';
+      applyColor(COLOR_CLOSED);
+    }
+  }
 
-function animate(){
-ctx.clearRect(0,0,canvas.width,canvas.height);
-particlesArray.forEach(p=>{
-p.update();
-p.draw();
-});
-requestAnimationFrame(animate);
-}
-animate();
-
-window.addEventListener("resize",()=>{
-canvas.width=window.innerWidth;
-canvas.height=window.innerHeight;
-});
+  tick();
+  setInterval(tick, 1000);
 </script>
-
 </body>
 </html>
